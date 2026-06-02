@@ -1,7 +1,6 @@
 import streamlit as st
 import mysql.connector as mql
 import pandas as pd
-import matplotlib.pyplot as plt
 import plotly.graph_objects as go
 
 
@@ -26,7 +25,7 @@ if st.button("Done"):
                         \nData Ranges from {df.iloc[1,0]} to {df.iloc[-1,0]}""")            
             st.write(" ")
             st.write(" ")
-            cola,colb, colc, cold,cole, colf = st.columns(3+3)
+            cola,colb, colc, cold, cole, colf = st.columns(3+3)
             with cola:
                 st.write("Highest Price:")
                 st.write(f"₹{round(df.iloc[:,2].max(),2)} rupees on {df.loc[df['High'].idxmax(),'Date']}")
@@ -43,5 +42,8 @@ if st.button("Done"):
             st.plotly_chart(fig)
             
             st.subheader("Gains and losses:")
-            
+            with cold:
+                main_c = mql.connect()
+                
+                st.write(f"Best Return:")
             
