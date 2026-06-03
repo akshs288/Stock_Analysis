@@ -48,10 +48,19 @@ if st.button("Done"):
                     if main_c.is_connected():
                         cursor = main_c.cursor()
                         cursor.execute("use Stock_analysis;")
-                        cursor.execute("create table if not exists user (Date DATETIME,Open FLOAT,High FLOAT,Low float,_Close float,Adj_Close float, Volume INT);")
-                        file_path = Path(file_select).resolve()
-
+                        tabel_name = file_select.replace("-", "_").replace(".csv","").replace(" ","_")
+                        cursor.execute(f"create table if not exists `{tabel_name}` (Date DATETIME,Open FLOAT,High FLOAT,Low float,Close float,Adj_Close float, Volume INT);")
+                        df["Date"] = pd.to_datetime(df["Date"], format="%d-%m-%Y")
+                        df["Date"] = df["Date"].dt.strftime("%Y-%m-%d")
+                        
+                        query = f"INSERT INTO `{tabel_name}` (`Date`, `Open`,`High`,`Low`, `Close`,`Adj_Close`, `Volume`) values (%s,%s,%s,%s,%s,%s,%s)"
+                        data = df[["Date", "Open", "High", "Low", "Close", "Adj_Close", "Volume"]].values.tolist()
+                        cursor.executemany(query, data)
+                        main_c.commit()
+                        print(data)
+                        
+                        
                 except Exception as e:
-                    print("Any error occured")
+                    print("Any error occured -",e)
 
                     
