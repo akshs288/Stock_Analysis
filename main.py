@@ -2,7 +2,7 @@ import streamlit as st
 import mysql.connector as mql
 import pandas as pd
 import plotly.graph_objects as go
-
+from pathlib import Path
 
 st.title("Stock Analyzer")
 
@@ -43,7 +43,15 @@ if st.button("Done"):
             
             st.subheader("Gains and losses:")
             with cold:
-                main_c = mql.connect()
-                
-                st.write(f"Best Return:")
-            
+                try:
+                    main_c = mql.connect(host= "localhost",user="root", database = "Stock_analysis", password= "Akshs123")
+                    if main_c.is_connected():
+                        cursor = main_c.cursor()
+                        cursor.execute("use Stock_analysis;")
+                        cursor.execute("create table if not exists user (Date DATETIME,Open FLOAT,High FLOAT,Low float,_Close float,Adj_Close float, Volume INT);")
+                        file_path = Path(file_select).resolve()
+
+                except Exception as e:
+                    print("Any error occured")
+
+                    
