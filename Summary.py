@@ -4,7 +4,7 @@ import pandas as pd
 import plotly.graph_objects as go
 from pathlib import Path
 
-st.title("Stock Analyzer")
+st.title("📊 🖥️ Stock Analyzer")
 
 # Uploading files
 main_data = st.file_uploader(label= "Upload your file here",type = ["csv"], accept_multiple_files=True) # It returns the name of the files
@@ -23,7 +23,7 @@ if st.button("Done"):
                         Stock name: {j.name}
                         \nNo. of records: {len(df)}
                         \nData Ranges from {df.iloc[1,0]} to {df.iloc[-1,0]}""")            
-            st.write(" ")
+            st.write("----------------x------------------x------------------x------------------x------------------x------------------x------------------x")
             st.write(" ")
             cola,colb, colc, cold, cole, colf = st.columns(3+3)
             with cola:
@@ -36,10 +36,9 @@ if st.button("Done"):
                 st.write("Average closing price:")
                 st.write(f"₹{round(df['Close'].mean(),2)} rupees")
             
+            st.write("----------------x------------------x------------------x------------------x------------------x------------------x------------------x")
             st.write(" ")
-            st.write(" ")
-            st.write(" ")
-            st.write(" ")
+
             # Showing volatility for a share
             st.write("Volatility")
             try:
@@ -59,6 +58,9 @@ if st.button("Done"):
                     data = df[["Date", "Open", "High", "Low", "Close", "Adj Close", "Volume"]].values.tolist()
                     cursor.executemany(query, data)
                     
+                    # cursor.execute("create view daily_return as select year(date) as _year,daily_return from (select *,(LAG(CLOSE) OVER(ORDER BY DATE)-close)/close as daily_Return from a) t;")
+                    # cursor.execute("select _year, round((stddev(daily_return)* sqrt(252))*100,2) as volatility from daily_return  group by _year;")
+                    # volatility = cursor.fetchall()   # It will return list of tuples
                     
                     main_c.commit()
                         
