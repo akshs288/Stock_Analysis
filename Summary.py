@@ -17,61 +17,34 @@ file_select = st.sidebar.selectbox("Choose the file",l)
 if st.button("Done"):
     for j in main_data:
         if j.name == file_select:
+            st.session_state["selected_file"] = j        # File is stored in session state
             df = pd.read_csv(j)
-            st.subheader("Summary")
+            st.session_state["df"] = df     # Data is stored in this df
+            
+            st.subheader("📋Summary")
             st.markdown(f"""
                         Stock name: {j.name}
                         \nNo. of records: {len(df)}
-                        \nData Ranges from {df.iloc[1,0]} to {df.iloc[-1,0]}""")            
+                        \nData Ranges from {df.iloc[1,0]} to {df.iloc[-1,0]}""")
             st.write("----------------x------------------x------------------x------------------x------------------x------------------x------------------x")
             st.write(" ")
             cola,colb, colc, cold, cole, colf = st.columns(3+3)
             with cola:
-                st.write("Highest Price:")
+                st.write("💵Highest Price:")
                 st.write(f"₹{round(df.iloc[:,2].max(),2)} rupees on {df.loc[df['High'].idxmax(),'Date']}")
             with colb:
-                st.write("Lowest Price:")
+                st.write("📉Lowest Price:")
                 st.write(f"₹{round(df.iloc[:,3].min(),2)} rupees on {df.loc[df['Low'].idxmin(),'Date']}")
             with colc:
-                st.write("Average closing price:")
+                st.write("⚖️Average closing price:")
                 st.write(f"₹{round(df['Close'].mean(),2)} rupees")
             
             st.write("----------------x------------------x------------------x------------------x------------------x------------------x------------------x")
             st.write(" ")
-
-            # Showing volatility for a share
-            st.write("Volatility")
-            try:
-                main_c = mql.connect(host= "localhost",user="root", database = "Stock_analysis", password= "Akshs123")
-                if main_c.is_connected():
-                    cursor = main_c.cursor()
-                    cursor.execute("use Stock_analysis;")
-                    tabel_name = file_select.replace("-", "_").replace(".csv","").replace(" ","_")
-                    cursor.execute(f"DROP TABLE IF EXISTS `{tabel_name}`;")
-                    cursor.execute(f"create table `{tabel_name}` (Date DATETIME,Open FLOAT,High FLOAT,Low float,Close float,Adj_Close float, Volume INT)")
-                
-                    df["Date"] = pd.to_datetime(df["Date"], format="mixed", dayfirst=True).dt.strftime("%Y-%m-%d")                    
-                    query = f"""
-                    INSERT INTO `{tabel_name}` (`Date`, `Open`, `High`, `Low`, `Close`, `Adj_Close`, `Volume`)
-                    VALUES (%s, %s, %s, %s, %s, %s, %s)
-                    """
-                    data = df[["Date", "Open", "High", "Low", "Close", "Adj Close", "Volume"]].values.tolist()
-                    cursor.executemany(query, data)
-                    
-                    # cursor.execute("create view daily_return as select year(date) as _year,daily_return from (select *,(LAG(CLOSE) OVER(ORDER BY DATE)-close)/close as daily_Return from a) t;")
-                    # cursor.execute("select _year, round((stddev(daily_return)* sqrt(252))*100,2) as volatility from daily_return  group by _year;")
-                    # volatility = cursor.fetchall()   # It will return list of tuples
-                    
-                    main_c.commit()
-                        
-            except Exception as e:
-                    print("Any error occured -",e)
-            st.write(" ")
-            st.write(" ")
-            st.write(" ")
-            st.write(" ")
             # Price Charts
-            st.write("Price Chart")
+            st.write("📊Price Chart")
             fig = go.Figure(data = [go.Candlestick(x=df["Date"], open = df["Open"], close=df["Close"],high = df["High"],low=df["Low"])])
             st.plotly_chart(fig)
-                    
+            
+            
+            
