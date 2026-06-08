@@ -18,8 +18,9 @@ if st.button("Done"):
     for j in main_data:
         if j.name == file_select:
             st.session_state["selected_file"] = j        # File is stored in session state
+            st.session_state["file_name"] = j.name
             df = pd.read_csv(j)
-            st.session_state["df"] = df     # Data is stored in this df
+            st.session_state["df"] = df                  # Data is stored in this df
             
             st.subheader("📋Summary")
             st.markdown(f"""
