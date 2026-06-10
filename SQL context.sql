@@ -18,10 +18,13 @@ group by _year) x
 where (x.volatility = (select max(volatility) from x)) or (x.volatility = (select min(volatility) from x));
 
 
+select * from aa;
 
+select date, daily_return from(
+select *,(LAG(CLOSE) OVER(ORDER BY DATE)-close)/close as daily_Return, row_number() over(order by date) as rank_number
+from aa) t
+where t.rank_number > 1 and (daily_return = (select max(t.daily_return) from aa));
 
-select *,(LAG(CLOSE) OVER(ORDER BY DATE)-close)/close as daily_Return
-from aame;
 
 
 select *,row_number() over(order by volatility) as asc_,row_number() over(order by volatility desc) as desc_ from(
@@ -35,5 +38,6 @@ from daily_return
 group by _year
 )
 select max(volatility),min(volatility) from vol;
+
 
 

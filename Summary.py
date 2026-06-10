@@ -29,16 +29,25 @@ if st.button("Done"):
                         \nData Ranges from {df.iloc[1,0]} to {df.iloc[-1,0]}""")
             st.write("----------------x------------------x------------------x------------------x------------------x------------------x------------------x")
             st.write(" ")
-            cola,colb, colc, cold, cole, colf = st.columns(3+3)
+            cola,colb, colc = st.columns(3)
             with cola:
                 st.write("💵Highest Price:")
-                st.write(f"₹{round(df.iloc[:,2].max(),2)} rupees on {df.loc[df['High'].idxmax(),'Date']}")
+                price1 = str("₹")+str(round(df.iloc[:,2].max(),2))
+                date1 = str(df.loc[df['High'].idxmax(),'Date'])
+
+            cola.metric(date1,price1,border=True)
+            
             with colb:
                 st.write("📉Lowest Price:")
-                st.write(f"₹{round(df.iloc[:,3].min(),2)} rupees on {df.loc[df['Low'].idxmin(),'Date']}")
+                price2 = str("₹")+str(round(df.iloc[:,3].min(),2))
+                date2 = str(df.loc[df['Low'].idxmin(),'Date'])
+
+            colb.metric(date2,price2,border=True)
+
             with colc:
                 st.write("⚖️Average closing price:")
-                st.write(f"₹{round(df['Close'].mean(),2)} rupees")
+                price3 = str("₹")+str(round(df['Close'].mean(),2))
+            colc.metric(price3,"","",border=True)
             
             st.write("----------------x------------------x------------------x------------------x------------------x------------------x------------------x")
             st.write(" ")
